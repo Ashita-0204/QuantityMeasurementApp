@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="FeetAndInchesMeasurementEquality.Tests/FeetAndInchesMeasurementEquality.Tests.csproj" />
+  <Project Path="FeetAndInchesMeasurementEquality/FeetAndInchesMeasurementEquality.csproj" />
+</Solution>
