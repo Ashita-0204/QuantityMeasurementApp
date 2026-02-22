@@ -1,0 +1,10 @@
+# Build folders
+bin/
+obj/
+*.csproj
+*.slnx
+# Test results
+TestResults/
+
+# VS Code settings
+.vscode/
