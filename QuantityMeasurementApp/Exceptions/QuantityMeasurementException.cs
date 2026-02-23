@@ -1,4 +1,4 @@
-namespace LengthMeasurementExtension.App.Exceptions
+namespace QuantityMeasurementApp.Exceptions
 {
     public class QuantityMeasurementException : Exception
     {

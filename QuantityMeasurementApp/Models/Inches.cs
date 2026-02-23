@@ -1,6 +1,6 @@
-using LengthMeasurementExtension.App.Exceptions;
+using QuantityMeasurementApp.Exceptions;
 
-namespace LengthMeasurementExtension.App.Models
+namespace QuantityMeasurementApp.Models
 {
     // UC2 -> Inches Measurement Class
     public class Inches
@@ -9,7 +9,7 @@ namespace LengthMeasurementExtension.App.Models
 
         public Inches(double value)
         {
-            // Validate numeric input
+            // Numeric Validation
             if (double.IsNaN(value) || double.IsInfinity(value))
             {
                 throw new QuantityMeasurementException("Invalid Inches Measurement");
@@ -20,13 +20,13 @@ namespace LengthMeasurementExtension.App.Models
 
         public override bool Equals(object? obj)
         {
-            // Same Reference Check
+            // Same Reference
             if (this == obj)
             {
                 return true;
             }
 
-            // Null or Different Type Check
+            // Null + Type Check
             if (obj == null || GetType() != obj.GetType())
             {
                 return false;
@@ -34,7 +34,7 @@ namespace LengthMeasurementExtension.App.Models
 
             Inches other = (Inches)obj;
 
-            // Floating Point Comparison
+            // Floating Comparison
             return this.value.CompareTo(other.value) == 0;
         }
 

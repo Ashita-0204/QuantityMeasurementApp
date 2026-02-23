@@ -1,9 +1,9 @@
 using NUnit.Framework;
-using LengthMeasurementExtension.App.Services;
-using LengthMeasurementExtension.App.Models;
-using LengthMeasurementExtension.App.Exceptions;
+using QuantityMeasurementApp.Services;
+using QuantityMeasurementApp.Models;
+using QuantityMeasurementApp.Exceptions;
 
-namespace LengthMeasurementExtension.Tests
+namespace QuantityMeasurementApp.Tests
 {
     public class QuantityMeasurementServiceTests
     {

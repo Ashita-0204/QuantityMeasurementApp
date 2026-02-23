@@ -1,5 +1,5 @@
-using LengthMeasurementExtension.App.Exceptions;
-namespace LengthMeasurementExtension.App.Models
+using QuantityMeasurementApp.Exceptions;
+namespace QuantityMeasurementApp.Models
 {
     public class Feet
     {
