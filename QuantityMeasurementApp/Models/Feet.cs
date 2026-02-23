@@ -1,40 +1,35 @@
-using FeetAndInchesMeasurementEquality.Exceptions;
-
-namespace FeetAndInchesMeasurementEquality.Models
+using QuantityMeasurementApp.Exceptions;
+namespace QuantityMeasurementApp.Models
 {
-    // UC2 -> Inches Measurement Class
-    public class Inches
+    public class Feet
     {
         private readonly double value;
 
-        public Inches(double value)
+        public Feet(double value)
         {
-            // Numeric Validation
             if (double.IsNaN(value) || double.IsInfinity(value))
             {
-                throw new QuantityMeasurementException("Invalid Inches Measurement");
+                throw new QuantityMeasurementException("Invalid Feet Measurement");
             }
-
             this.value = value;
         }
 
         public override bool Equals(object? obj)
         {
-            // Same Reference
+            // Same reference
             if (this == obj)
             {
                 return true;
             }
 
-            // Null + Type Check
+            // Null or different type
             if (obj == null || GetType() != obj.GetType())
             {
                 return false;
             }
+            Feet other = (Feet)obj;
 
-            Inches other = (Inches)obj;
-
-            // Floating Comparison
+            // Correct Floating Comparison
             return this.value.CompareTo(other.value) == 0;
         }
 

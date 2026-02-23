@@ -1,6 +1,6 @@
-using FeetAndInchesMeasurementEquality.App;
+using QuantityMeasurementApp.App;
 
-namespace FeetAndInchesMeasurementEquality
+namespace QuantityMeasurementApp
 {
     class Program
     {
@@ -19,12 +19,12 @@ namespace FeetAndInchesMeasurementEquality
                 switch (choice)
                 {
                     case 1:
-                        QuantityMeasurementApp.DemonstrateFeetEquality();
+                        QuantityMeasurementUtility.DemonstrateFeetEquality();
                         break;
 
                     case 2:
-                        QuantityMeasurementApp.DemonstrateFeetEquality();
-                        QuantityMeasurementApp.DemonstrateInchesEquality();
+                        QuantityMeasurementUtility.DemonstrateFeetEquality();
+                        QuantityMeasurementUtility.DemonstrateInchesEquality();
                         break;
 
                     case 3:

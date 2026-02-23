@@ -1,12 +1,11 @@
-using FeetAndInchesMeasurementEquality.Services;
-using FeetAndInchesMeasurementEquality.Exceptions;
+using QuantityMeasurementApp.Services;
+using QuantityMeasurementApp.Exceptions;
 
-namespace FeetAndInchesMeasurementEquality.App
+namespace QuantityMeasurementApp.App
 {
-    public class QuantityMeasurementApp
+    public class QuantityMeasurementUtility
     {
-        private static QuantityMeasurementService service =
-            new QuantityMeasurementService();
+        private static QuantityMeasurementService service = new QuantityMeasurementService();
 
         // UC1 Static Method
         public static void DemonstrateFeetEquality()
