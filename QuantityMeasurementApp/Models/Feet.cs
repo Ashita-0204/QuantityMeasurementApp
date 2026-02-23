@@ -1,5 +1,5 @@
-using FeetEqualityMeasurement.Exceptions;
-namespace FeetEqualityMeasurement.Models
+using QuantityMeasurementApp.Exceptions;
+namespace QuantityMeasurementApp.Models
 {
     public class Feet
     {

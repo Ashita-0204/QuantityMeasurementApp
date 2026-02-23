@@ -1,6 +1,6 @@
-using FeetEqualityMeasurement.Models;
+using QuantityMeasurementApp.Models;
 
-namespace FeetEqualityMeasurement.Services
+namespace QuantityMeasurementApp.Services
 {
     public class QuantityMeasurementService
     {

@@ -1,9 +1,9 @@
 ﻿using NUnit.Framework;
-using FeetEqualityMeasurement.Services;
-using FeetEqualityMeasurement.Models;
-using FeetEqualityMeasurement.Exceptions;
+using QuantityMeasurementApp.Services;
+using QuantityMeasurementApp.Models;
+using QuantityMeasurementApp.Exceptions;
 
-namespace FeetEqualityMeasurement.Tests
+namespace QuantityMeasurementApp.Tests
 {
     public class QuantityMeasurementServiceTests
     {
@@ -17,34 +17,31 @@ namespace FeetEqualityMeasurement.Tests
 
         // Same Value Equality
         [Test]
-        public void GivenSameFeetValue_WhenCompared_ShouldReturnTrue()
+        public void testFeetEquality_SameValue()
         {
             bool result = service.AreEqual(1.0, 1.0);
-
             Assert.That(result, Is.True);
         }
 
         // Different Value
         [Test]
-        public void GivenDifferentFeetValue_WhenCompared_ShouldReturnFalse()
+        public void testFeetEquality_DifferentValue()
         {
             bool result = service.AreEqual(1.0, 2.0);
-
             Assert.That(result, Is.False);
         }
 
         // Null Comparison
         [Test]
-        public void GivenFeet_WhenComparedWithNull_ShouldReturnFalse()
+        public void testFeetEquality_NullComparison()
         {
             Feet feet = new Feet(1.0);
-
             Assert.That(feet.Equals(null), Is.False);
         }
 
         // Same Reference
         [Test]
-        public void GivenSameReference_ShouldReturnTrue()
+        public void testFeetEquality_SameReference()
         {
             Feet feet = new Feet(1.0);
 
@@ -53,10 +50,9 @@ namespace FeetEqualityMeasurement.Tests
 
         // Different Object Type
         [Test]
-        public void GivenFeet_WhenComparedWithDifferentObject_ShouldReturnFalse()
+        public void testFeetEquality_DifferentClass()
         {
             Feet feet = new Feet(1.0);
-
             Assert.That(feet.Equals("ABC"), Is.False);
         }
 
