@@ -1,6 +1,8 @@
 # Build folders
 bin/
 obj/
+*.csproj
+
 
 # Test results
 TestResults/

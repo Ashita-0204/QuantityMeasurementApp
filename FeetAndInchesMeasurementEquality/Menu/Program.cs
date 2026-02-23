@@ -1,41 +1,41 @@
-using FeetAndInchesMeasurementEquality.Services;
-using FeetAndInchesMeasurementEquality.Exceptions;
+using FeetAndInchesMeasurementEquality.App;
 
-class Program
+namespace FeetAndInchesMeasurementEquality
 {
-    static void Main()
+    class Program
     {
-        try
+        public static void Main()
         {
-            QuantityMeasurementService service = new QuantityMeasurementService();
+            int choice;
+            do
+            {
+                Console.WriteLine("\n===== Quantity Measurement Menu =====");
+                Console.WriteLine("1 -> UC1 Feet Equality");
+                Console.WriteLine("2 -> UC2 Inches Equality");
+                Console.WriteLine("3 -> Exit");
+                Console.Write("Enter Choice : ");
+                choice = int.Parse(Console.ReadLine());
 
-            // Feet Comparison(UC1)
-            Console.Write("Enter First Feet Value : ");
-            double feet1 = Convert.ToDouble(Console.ReadLine());
-            Console.Write("Enter Second Feet Value : ");
-            double feet2 = Convert.ToDouble(Console.ReadLine());
+                switch (choice)
+                {
+                    case 1:
+                        QuantityMeasurementApp.DemonstrateFeetEquality();
+                        break;
 
-            bool feetResult = service.AreEqual(feet1, feet2);
+                    case 2:
+                        QuantityMeasurementApp.DemonstrateFeetEquality();
+                        QuantityMeasurementApp.DemonstrateInchesEquality();
+                        break;
 
-            Console.WriteLine("Feet Equality Result : " + feetResult);
+                    case 3:
+                        System.Console.WriteLine("Exiting..");
+                        break;
 
-            // Inches Comparison(UC2)
-            Console.Write("Enter First Inches Value : ");
-            double inch1 = Convert.ToDouble(Console.ReadLine());
-            Console.Write("Enter Second Inches Value : ");
-            double inch2 = Convert.ToDouble(Console.ReadLine());
-
-            bool inchResult = service.AreInchesEqual(inch1, inch2);
-
-            Console.WriteLine("Inches Equality Result : " + inchResult);
-        }
-        catch (FormatException)
-        {
-            Console.WriteLine("Invalid Input. Enter numeric value.");
-        }
-        catch (QuantityMeasurementException ex)
-        {
-            Console.WriteLine(ex.Message);
+                    default:
+                        Console.WriteLine("Invalid Choice");
+                        break;
+                }
+            } while (choice != 3);
         }
     }
 }

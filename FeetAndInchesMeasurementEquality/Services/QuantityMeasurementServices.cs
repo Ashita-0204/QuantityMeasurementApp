@@ -4,7 +4,7 @@ namespace FeetAndInchesMeasurementEquality.Services
 {
     public class QuantityMeasurementService
     {
-        // UC1 -> Feet Equality (Already Exists)
+        // UC1 -> Feet Equality
         public bool AreEqual(double value1, double value2)
         {
             Feet f1 = new Feet(value1);
@@ -14,7 +14,6 @@ namespace FeetAndInchesMeasurementEquality.Services
         }
 
         // UC2 -> Inches Equality Method
-        // Separate method reduces dependency on Main
         public bool AreInchesEqual(double value1, double value2)
         {
             Inches i1 = new Inches(value1);

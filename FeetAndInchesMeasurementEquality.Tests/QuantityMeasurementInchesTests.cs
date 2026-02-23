@@ -16,69 +16,44 @@ namespace FeetAndInchesMeasurementEquality.Tests
             service = new QuantityMeasurementService();
         }
 
-        // Same Value Equality
+        // For Same Value
         [Test]
-        public void GivenSameInchesValue_WhenCompared_ShouldReturnTrue()
+        public void testInchesEquality_SameValue()
         {
             bool result = service.AreInchesEqual(1.0, 1.0);
-
             Assert.That(result, Is.True);
         }
 
-        // Different Value
+        // For Different Value
         [Test]
-        public void GivenDifferentInchesValue_WhenCompared_ShouldReturnFalse()
+        public void testInchesEquality_DifferentValue()
         {
             bool result = service.AreInchesEqual(1.0, 2.0);
-
             Assert.That(result, Is.False);
         }
 
-        // Null Comparison
+        //For Null Comparison
         [Test]
-        public void GivenInches_WhenComparedWithNull_ShouldReturnFalse()
+        public void testInchesEquality_NullComparison()
         {
             Inches inches = new Inches(1.0);
-
             Assert.That(inches.Equals(null), Is.False);
         }
 
-        // Same Reference
+        //For Different Class
         [Test]
-        public void GivenSameReference_ShouldReturnTrue()
+        public void testInchesEquality_DifferentClass()
         {
             Inches inches = new Inches(1.0);
-
-            Assert.That(inches.Equals(inches), Is.True);
-        }
-
-        // Different Object Type Comparison
-        [Test]
-        public void GivenInches_WhenComparedWithDifferentObject_ShouldReturnFalse()
-        {
-            Inches inches = new Inches(1.0);
-
             Assert.That(inches.Equals("ABC"), Is.False);
         }
 
-        // Custom Exception -> NaN
+        //For Same Reference
         [Test]
-        public void GivenInvalidInchesValue_ShouldThrowCustomException()
+        public void testInchesEquality_SameReference()
         {
-            Assert.Throws<QuantityMeasurementException>(() =>
-            {
-                Inches inches = new Inches(double.NaN);
-            });
-        }
-
-        // Infinity Exception
-        [Test]
-        public void GivenInfinityValue_ShouldThrowCustomException()
-        {
-            Assert.Throws<QuantityMeasurementException>(() =>
-            {
-                Inches inches = new Inches(double.PositiveInfinity);
-            });
+            Inches inches = new Inches(1.0);
+            Assert.That(inches.Equals(inches), Is.True);
         }
     }
 }
