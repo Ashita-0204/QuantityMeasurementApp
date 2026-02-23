@@ -1,9 +1,9 @@
 using NUnit.Framework;
-using FeetAndInchesMeasurementEquality.Services;
-using FeetAndInchesMeasurementEquality.Models;
-using FeetAndInchesMeasurementEquality.Exceptions;
+using QuantityMeasurementApp.Services;
+using QuantityMeasurementApp.Models;
+using QuantityMeasurementApp.Exceptions;
 
-namespace FeetAndInchesMeasurementEquality.Tests
+namespace QuantityMeasurementApp.Tests
 {
     public class QuantityMeasurementServiceTests
     {

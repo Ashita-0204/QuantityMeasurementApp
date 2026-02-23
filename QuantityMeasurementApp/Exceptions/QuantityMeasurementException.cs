@@ -1,4 +1,4 @@
-namespace FeetAndInchesMeasurementEquality.Exceptions
+namespace QuantityMeasurementApp.Exceptions
 {
     public class QuantityMeasurementException : Exception
     {
