@@ -66,5 +66,13 @@ namespace QuantityMeasurementApp.App
 
             return l1.Add(l2);
         }
+
+        // UC7 Demonstration
+        public static Length demonstrateLengthAdditionWithTargetUnit(double v1, Length.LengthUnit u1, double v2, Length.LengthUnit u2, Length.LengthUnit targetUnit)
+        {
+            Length l1 = new Length(v1, u1);
+            Length l2 = new Length(v2, u2);
+            return l1.Add(l2, targetUnit);
+        }
     }
 }

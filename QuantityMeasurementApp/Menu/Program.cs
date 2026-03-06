@@ -17,8 +17,8 @@ namespace QuantityMeasurementApp
                 Console.WriteLine("4 -> UC4 Extended Units");
                 Console.WriteLine("5 -> UC5 Length Conversion");
                 Console.WriteLine("6 -> UC6 Addition For two Lengths");
-                Console.WriteLine("7 -> Exit");
-
+                Console.WriteLine("7 -> UC7 Addition With Target Unit");
+                Console.WriteLine("8 -> Exit");
                 Console.Write("Enter Choice : ");
                 choice = int.Parse(Console.ReadLine());
 
@@ -63,6 +63,20 @@ namespace QuantityMeasurementApp
                         Console.WriteLine($"Result: {result}");
                         break;
                     case 7:
+                        Console.Write("Enter first value: ");
+                        double v1t = double.Parse(Console.ReadLine());
+                        Console.Write("Enter first unit (Feet/Inches/Yards/Centimeters): ");
+                        Length.LengthUnit u1t = Enum.Parse<Length.LengthUnit>(Console.ReadLine());
+                        Console.Write("Enter second value: ");
+                        double v2t = double.Parse(Console.ReadLine());
+                        Console.Write("Enter second unit: ");
+                        Length.LengthUnit u2t = Enum.Parse<Length.LengthUnit>(Console.ReadLine());
+                        Console.Write("Enter target unit: ");
+                        Length.LengthUnit target = Enum.Parse<Length.LengthUnit>(Console.ReadLine());
+                        var result2 = QuantityMeasurementStatic.demonstrateLengthAdditionWithTargetUnit(v1t, u1t, v2t, u2t, target);
+                        Console.WriteLine($"Result: {result2}");
+                        break;
+                    case 8:
                         System.Console.WriteLine("Exitingg");
                         break;
                     default:
@@ -70,7 +84,7 @@ namespace QuantityMeasurementApp
                         break;
                 }
 
-            } while (choice != 7);
+            } while (choice != 8);
         }
     }
 }

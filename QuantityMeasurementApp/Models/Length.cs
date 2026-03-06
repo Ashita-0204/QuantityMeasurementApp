@@ -131,5 +131,28 @@ namespace QuantityMeasurementApp.Models
                 return new Length(resultValue, this.unit);
             }
         }
+        // UC7 Addition with Target Unit Specification
+
+        public Length Add(Length thatLength, LengthUnit targetUnit)
+        {
+            if (thatLength == null)
+            {
+                throw new ArgumentException("Length to add cannot be null");
+            }
+            if (!Enum.IsDefined(typeof(LengthUnit), targetUnit))
+            {
+                throw new ArgumentException("Invalid target unit");
+            }
+            return AddAndConvert(thatLength, targetUnit);
+        }
+
+        private Length AddAndConvert(Length thatLength, LengthUnit targetUnit)
+        {
+            double thisInches = this.ConvertToBaseUnit();
+            double thatInches = thatLength.ConvertToBaseUnit();
+            double sumInches = thisInches + thatInches;
+            double resultValue = ConvertFromBaseToTargetUnit(sumInches, targetUnit);
+            return new Length(resultValue, targetUnit);
+        }
     }
 }
