@@ -1,4 +1,5 @@
 using QuantityMeasurementApp.App;
+using QuantityMeasurementApp.Models;
 namespace QuantityMeasurementApp
 {
     class Program
@@ -14,10 +15,9 @@ namespace QuantityMeasurementApp
                 Console.WriteLine("2 -> UC2 Inches Equality");
                 Console.WriteLine("3 -> UC3 Generic Length Equality");
                 Console.WriteLine("4 -> UC4 Extended Units");
-
                 Console.WriteLine("5 -> UC5 Length Conversion");
-
-                Console.WriteLine("6 -> Exit");
+                Console.WriteLine("6 -> UC6 Addition For two Lengths");
+                Console.WriteLine("7 -> Exit");
 
                 Console.Write("Enter Choice : ");
                 choice = int.Parse(Console.ReadLine());
@@ -51,6 +51,18 @@ namespace QuantityMeasurementApp
 
                         break;
                     case 6:
+                        Console.Write("Enter first value: ");
+                        double v1 = double.Parse(Console.ReadLine());
+                        Console.Write("Enter first unit (Feet/Inches/Yards/Centimeters): ");
+                        Length.LengthUnit u1 = Enum.Parse<Length.LengthUnit>(Console.ReadLine());
+                        Console.Write("Enter second value: ");
+                        double v2 = double.Parse(Console.ReadLine());
+                        Console.Write("Enter second unit: ");
+                        Length.LengthUnit u2 = Enum.Parse<Length.LengthUnit>(Console.ReadLine());
+                        var result = QuantityMeasurementStatic.demonstrateLengthAddition(v1, u1, v2, u2);
+                        Console.WriteLine($"Result: {result}");
+                        break;
+                    case 7:
                         System.Console.WriteLine("Exitingg");
                         break;
                     default:
@@ -58,7 +70,7 @@ namespace QuantityMeasurementApp
                         break;
                 }
 
-            } while (choice != 6);
+            } while (choice != 7);
         }
     }
 }

@@ -6,7 +6,15 @@ namespace QuantityMeasurementApp.Models
     {
         private double value;
         private LengthUnit unit;
+        public double Value
+        {
+            get { return value; }
+        }
 
+        public LengthUnit Unit
+        {
+            get { return unit; }
+        }
         public enum LengthUnit
         {
             Feet,
@@ -99,6 +107,29 @@ namespace QuantityMeasurementApp.Models
         public override string ToString()
         {
             return $"{value:F2} {unit}";
+        }
+
+
+        //UC 6 Implementation to add Lengths
+        // 
+
+        private double ConvertFromBaseToTargetUnit(double inches, LengthUnit targetUnit)
+        {
+            return inches / GetConversionFactor(targetUnit);
+        }
+        public Length Add(Length thatLength)
+        {
+            {
+                if (thatLength == null)
+                {
+                    throw new ArgumentException("Length to add cannot be null");
+                }
+                double thisInches = this.ConvertToBaseUnit();
+                double thatInches = thatLength.ConvertToBaseUnit();
+                double sumInches = thisInches + thatInches;
+                double resultValue = ConvertFromBaseToTargetUnit(sumInches, this.unit);
+                return new Length(resultValue, this.unit);
+            }
         }
     }
 }
