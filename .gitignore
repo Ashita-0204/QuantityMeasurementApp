@@ -3,7 +3,7 @@
 bin/
 obj/
 *.csproj
-*.slnx
+.slnx
 
 # Test results
 TestResults/

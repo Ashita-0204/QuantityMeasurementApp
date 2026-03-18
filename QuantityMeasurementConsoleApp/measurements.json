@@ -1,0 +1,38 @@
+[
+  {
+    "Id": "bd9c97bd-ec73-4783-bda0-7c518f71835f",
+    "Timestamp": "2026-03-14T11:33:17.9719091Z",
+    "Operation": "Add",
+    "Operand1": {
+      "Value": 12,
+      "Unit": "Feet",
+      "Category": "Length"
+    },
+    "Operand2": {
+      "Value": 2,
+      "Unit": "Feet",
+      "Category": "Length"
+    },
+    "Result": {
+      "Value": 14,
+      "Unit": "Feet",
+      "Category": "Length"
+    },
+    "BoolResult": null,
+    "ScalarResult": null,
+    "HasError": false,
+    "ErrorMessage": ""
+  },
+  {
+    "Id": "bc85f661-f8e0-4fe7-a973-9f587a381e7a",
+    "Timestamp": "2026-03-14T11:43:02.853023Z",
+    "Operation": "Add",
+    "Operand1": null,
+    "Operand2": null,
+    "Result": null,
+    "BoolResult": null,
+    "ScalarResult": null,
+    "HasError": true,
+    "ErrorMessage": "Invalid Unit"
+  }
+]
