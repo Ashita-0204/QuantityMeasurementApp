@@ -1,419 +1,299 @@
-# QuantityMeasurementApp
+# 🧮 QuantityMeasurementApp
 
-## Overview
-
-QuantityMeasurementApp is a C# console application designed to model and manipulate physical measurements such as length, weight, volume, and temperature. The application supports equality comparison, unit conversion, arithmetic operations, and database persistence while demonstrating strong software design principles and scalable architecture.
-
-The system evolves progressively through multiple use cases (UC1–UC16). Each use case incrementally improves the architecture and introduces new capabilities.
-
-The project demonstrates the following software engineering principles:
-
-- Object-Oriented Programming (OOP)
-- DRY (Don't Repeat Yourself)
-- SOLID Principles
-- Generic Programming
-- Immutability
-- N-Tier Architecture
-- Database Integration using ADO.NET
-
-The application begins with simple measurement comparisons and evolves into a scalable, maintainable architecture capable of supporting multiple measurement categories and persistence.
+> 🚀 A scalable, production-ready backend system built with **C# & .NET**, designed to handle real-world measurement operations with precision, performance, and clean architecture.
 
 ---
 
-# Use Cases
+## ✨ Overview
+
+**QuantityMeasurementApp** is an advanced backend application that models and processes physical quantities such as:
+
+- 📏 Length
+- ⚖️ Weight
+- 🌡️ Temperature
+- 🧪 Volume
+
+The project starts with basic equality comparisons and evolves into a **full-fledged enterprise-grade system** featuring:
+
+- 🔐 Secure Authentication using JWT
+- 🗄️ Database Persistence (ADO.NET + EF Core)
+- ⚡ Multi-layer Caching (Redis + In-Memory)
+- 🌐 RESTful API + Console Interface
+- 🧪 Extensive Unit & Integration Testing
+
+💡 This project is built with a strong focus on **clean architecture, scalability, and maintainability**, making it ideal for real-world backend systems.
 
 ---
 
-# UC1: Feet Measurement Equality
+## 🚀 Key Features
 
-## Description
-
-This use case introduces the basic functionality for comparing two length measurements expressed in feet.
-
-## Features
-
-- Compares two values measured in feet
-- Handles null comparisons safely
-- Ensures type-safe comparisons
-- Validates numeric inputs
-
-## Concepts Applied
-
-- Equality comparison
-- Defensive programming
-- Basic object-oriented modeling
+- ✅ Multi-unit measurement handling
+- 🔁 Accurate unit conversions with base normalization
+- ➕ Arithmetic operations (Add, Subtract, Divide)
+- 🧠 Intelligent validation & exception handling
+- 📊 Operation history tracking
+- 🔐 Secure API access with JWT
+- ⚡ High-performance caching (Redis + Memory)
+- 🧪 Comprehensive testing suite
 
 ---
 
-# UC2: Feet and Inches Equality
+## 🚀 Getting Started
 
-## Description
+### 🔧 Prerequisites
 
-This use case extends the system by introducing inches as an additional unit of measurement.
+- .NET SDK installed
+- SQL Server
+- (Optional) Redis
 
-## Features
+---
 
-- Supports multiple length units
-- Enables comparison between different units
-- Performs validation and type checking
-- Expands the measurement model
+### 🛠️ Build the Solution
 
-## Concepts Applied
+```bash
+dotnet build QuantityMeasurementApp.sln
+```
 
-- Multi-unit measurement handling
+---
+
+### 🖥️ Run Console Application
+
+```bash
+dotnet run --project QuantityMeasurementConsoleApp
+```
+
+👉 Features:
+
+- Interactive menu-driven system
+- Supports all use cases
+- Allows repository selection (Cache / Redis / SQL)
+
+---
+
+### 🌐 Run Web API
+
+```bash
+dotnet run --project QuantityMeasurementApi
+```
+
+👉 Features:
+
+- Swagger UI enabled 📘
+- JWT Authentication 🔐
+- REST endpoints for all operations
+
+---
+
+## 🏗️ Architecture (N-Tier)
+
+```
+Presentation Layer (Console / API)
+        ↓
+Business Layer (Services)
+        ↓
+Repository Layer (DB / Cache / Redis)
+        ↓
+Model Layer (DTOs, Entities, Units)
+```
+
+---
+
+## 🔹 Layer Breakdown
+
+### 🎯 Presentation Layer
+
+- Handles user interaction
+- Includes:
+  - Console UI
+  - REST API Controllers
+
+---
+
+### ⚙️ Business Layer
+
+- Core logic of application
+- Handles:
+  - Validation
+  - Arithmetic operations
+  - Unit conversions
+  - Business rules enforcement
+
+---
+
+### 🗄️ Repository Layer
+
+- Data access abstraction
+- Supports:
+  - SQL Server
+  - Redis Cache
+  - In-memory storage
+
+---
+
+### 📦 Model Layer
+
+- Core domain representation
+- Includes:
+  - DTOs
+  - Entities
+  - Enums (Units)
+  - Custom Exceptions
+
+---
+
+## 🧠 Core Concepts & Principles
+
+- 🧱 Object-Oriented Programming (OOP)
+- ♻️ DRY (Don't Repeat Yourself)
+- 🧩 SOLID Principles
+- 🔁 Generic Programming
+- 🔒 Immutability
+- 🔗 Dependency Injection
+- 🏗️ N-Tier Architecture
+- ⚠️ Exception Handling Middleware
+- 🔐 Secure Authentication (JWT)
+
+---
+
+## 📚 Use Cases (UC1–UC18)
+
+---
+
+### 🟢 UC1–UC5: Foundations
+
+- Basic equality checks (Feet, Inches)
 - Cross-unit comparison
-- Input validation
+- Generic Quantity abstraction
+- Unit conversion logic
+- Precision & validation handling
 
 ---
 
-# UC3: Generic Quantity Class (DRY Principle)
+### 🟡 UC6–UC10: Arithmetic & Design
 
-## Description
-
-This use case introduces a reusable quantity class representing measurements using a numeric value and an associated unit.
-
-## Features
-
-- Introduces a reusable quantity representation
-- Introduces an enumeration for supported length units
-- Removes duplicated comparison logic
-- Supports cross-unit equality comparison
-
-## Concepts Applied
-
-- DRY principle
-- Encapsulation
-- Enumeration-based unit representation
-- Value-based equality
+- Addition, subtraction, division
+- Target unit-based results
+- Multi-category measurement support
+- Generic + Interface-based architecture
 
 ---
 
-# UC4: Extended Unit Support
+### 🔵 UC11–UC14: Advanced Measurements
 
-## Description
-
-This use case expands the system to support additional units without changing the core equality logic.
-
-## Features
-
-- Adds additional length units
-- Maintains compatibility with existing logic
-- Demonstrates extensibility of the system
-
-## Concepts Applied
-
-- Scalable design
-- Enum extensibility
-- Open-Closed Principle
+- Weight operations ⚖️
+- Volume handling 🧪
+- Temperature conversions 🌡️
+- Restricted arithmetic for temperature
 
 ---
 
-# UC5: Unit-to-Unit Conversion
+### 🟣 UC15: N-Tier Architecture
 
-## Description
-
-This use case introduces a conversion mechanism allowing measurements to be converted between different units.
-
-## Features
-
-- Converts values between supported units
-- Uses base-unit normalization
-- Ensures accurate conversion calculations
-- Provides reusable conversion functionality
-
-## Concepts Applied
-
-- Base unit normalization
-- Conversion abstraction
-- Precision handling
+- Layer separation
+- DTO-based communication
+- Dependency Injection
+- Scalable system design
 
 ---
 
-# UC6: Addition of Two Length Units
+### 🟠 UC16: Database Integration
 
-## Description
-
-This use case introduces arithmetic addition between measurement quantities.
-
-## Features
-
-- Supports addition of quantities within the same category
-- Performs automatic unit conversion before calculation
-- Maintains immutability of measurement objects
-- Returns results in a consistent unit representation
-
-## Concepts Applied
-
-- Arithmetic operations on value objects
-- Unit normalization
-- Immutable object design
+- ADO.NET + EF Core
+- SQL persistence
+- Transaction handling
+- Repository abstraction
 
 ---
 
-# UC7: Addition with Target Unit Specification
+### 🔴 UC17: Exception Handling & Validation
 
-## Description
-
-This use case enhances addition functionality by allowing results to be returned in a specified unit.
-
-## Features
-
-- Supports specifying a target unit
-- Uses method overloading for flexible operations
-- Performs necessary conversion before returning results
-
-## Concepts Applied
-
-- Method overloading
-- Flexible API design
-- Conversion abstraction
+- Custom exception classes
+- Global exception middleware
+- Structured error responses
+- Safe arithmetic validations
 
 ---
 
-# UC8: Subtraction of Two Length Units
+### 🟤 UC18: Measurement Command Center
 
-## Description
-
-This use case introduces subtraction between measurement quantities.
-
-## Features
-
-- Supports subtraction between quantities
-- Performs automatic unit conversion
-- Supports negative results
-- Maintains object immutability
-
-## Concepts Applied
-
-- Arithmetic subtraction
-- Floating-point tolerance handling
-- Immutable value objects
+- Centralized operation logging
+- Supports:
+  - 🧠 In-memory cache
+  - ⚡ Redis
+  - 🗄️ SQL database
+- Tracks:
+  - Operation history
+  - Usage count
+  - Errors
 
 ---
 
-# UC9: Multi-Category Measurement Support
+## 🔐 Authentication & Security
 
-## Description
-
-This use case expands the application to support multiple measurement categories.
-
-Separate classes represent different measurement types.
-
-## Features
-
-- Supports length, volume, and weight measurements
-- Each category defines its own units
-- Prevents cross-category arithmetic operations
-- Maintains strong type safety
-
-## Concepts Applied
-
-- Domain modeling
-- Category separation
-- Type-safe measurement handling
+- JWT-based authentication
+- Secure API endpoints
+- Password hashing & validation
+- Middleware-based token verification
 
 ---
 
-# UC10: Generic Quantity Class with Unit Interface
+## 🌐 API Capabilities
 
-## Description
-
-This use case refactors the multi-category architecture using generics and a common unit interface.
-
-## Features
-
-- Introduces a generic quantity class
-- Introduces a shared unit interface
-- Eliminates duplicated logic across measurement categories
-- Supports extensibility for future categories
-
-## Concepts Applied
-
-- Generic programming
-- Interface abstraction
-- Open-Closed Principle
+- 🔍 Measurement comparison
+- 🔁 Unit conversion
+- ➕ Arithmetic operations
+- 📊 History tracking
+- 🔐 Authentication endpoints
 
 ---
 
-# UC11: Multi-Category Measurement Using Generic Quantity
+## 🧪 Testing Strategy
 
-## Description
+Run all tests:
 
-This use case improves the generic architecture by enforcing compile-time type safety for measurement operations.
+```bash
+dotnet test
+```
 
-## Features
+### ✔️ Coverage Includes:
 
-- Uses generics to represent measurement categories
-- Ensures operations occur only between compatible quantities
-- Supports scalable measurement modeling
-
-## Concepts Applied
-
-- Type-safe generics
-- Interface-based design
-- Reusable domain architecture
+- Unit tests
+- Integration tests
+- Repository layer tests
+- Edge case validations
+- Arithmetic correctness
 
 ---
 
-# UC12: Arithmetic Operations on Quantities
+## 📦 Tech Stack
 
-## Description
-
-This use case introduces arithmetic operations for generic quantities.
-
-## Features
-
-- Supports addition, subtraction, and division
-- Performs base unit conversion before arithmetic operations
-- Allows result unit specification
-- Maintains immutability and validation
-
-## Concepts Applied
-
-- Generic arithmetic operations
-- Unit normalization
-- Domain logic encapsulation
+- 💻 C# / .NET
+- 🌐 ASP.NET Web API
+- 🗄️ SQL Server
+- ⚡ Redis
+- 🧪 xUnit
 
 ---
 
-# UC13: Centralized Arithmetic Logic (DRY Principle)
+## 🎯 Key Highlights
 
-## Description
-
-This use case refactors arithmetic operations to eliminate duplicated logic.
-
-## Features
-
-- Introduces a centralized arithmetic processing method
-- Uses an operation enumeration to determine arithmetic behavior
-- Ensures consistent validation and conversion
-
-## Concepts Applied
-
-- DRY principle
-- Centralized processing
-- Maintainable architecture
+- 🚀 Production-ready backend architecture
+- 🧠 Strong domain modeling
+- ⚡ High performance with caching
+- 🔐 Secure authentication system
+- 🧪 Fully tested system
+- 📦 Clean, modular, scalable design
 
 ---
 
-# UC14: Temperature Measurement with Selective Arithmetic Support
+## 👩‍💻 Author
 
-## Description
-
-This use case introduces temperature measurement support while restricting unsupported arithmetic operations.
-
-## Features
-
-- Adds temperature measurement support
-- Allows equality checks and conversions
-- Prevents unsupported arithmetic operations
-- Provides controlled operation validation
-
-## Concepts Applied
-
-- Selective capability implementation
-- Interface-based feature control
-- Safe operation validation
+Built with 💙 for mastering backend development, clean architecture, and real-world system design.
 
 ---
 
-# UC15: N-Tier Architecture Refactoring
+## ⭐ Future Enhancements
 
-## Description
-
-This use case restructures the application into an N-Tier architecture to improve scalability, maintainability, and separation of concerns.
-
-## Architecture Layers
-
-### Presentation Layer
-
-Handles user interaction and presentation logic.
-
-### Service Layer
-
-Contains business logic and orchestrates measurement operations.
-
-### Repository Layer
-
-Handles data access and persistence operations.
-
-### Domain Model Layer
-
-Contains core domain objects such as quantities and unit definitions.
-
-## Key Architectural Concepts
-
-### Data Transfer Objects
-
-DTOs transfer data between layers without exposing internal domain objects.
-
-### Dependency Injection
-
-Dependencies are provided to components instead of being created internally.
-
-### Error Handling as Data
-
-Errors are represented as structured responses rather than uncontrolled exceptions.
-
-### Immutability
-
-Measurement objects remain immutable to ensure consistent behavior.
-
-## SOLID Principles Applied
-
-- Single Responsibility Principle
-- Open Closed Principle
-- Liskov Substitution Principle
-- Interface Segregation Principle
-- Dependency Inversion Principle
-
-## Benefits
-
-- Improved maintainability
-- Improved testability
-- Better separation of concerns
-- Scalable architecture
-
----
-
-# UC16: Database Integration with ADO.NET for Quantity Measurement Persistence
-
-## Description
-
-This use case integrates database persistence into the application using ADO.NET.
-
-Measurement operations and results can now be stored and retrieved from a relational database.
-
-## Features
-
-- Database connectivity using ADO.NET
-- Connection pooling support
-- Parameterized SQL queries
-- Structured exception handling
-- Separation of persistence logic from business logic
-
-## Database Design
-
-A relational schema stores measurement operations, operands, units, and results.
-
-## Persistence Layer Responsibilities
-
-- Managing database connections
-- Executing SQL commands
-- Handling transactions
-- Mapping database records to data objects
-
-## Configuration Management
-
-Database connection details are externalized to support flexible deployment.
-
-## Testing Support
-
-Supports testing using mock repositories and test databases.
-
-## Performance Considerations
-
-- Efficient database connections
-- Optimized SQL queries
-- Transaction management
-- Resource cleanup
+- 🐳 Docker containerization
+- 🚀 CI/CD pipeline integration
+- 📊 Interactive dashboard UI
