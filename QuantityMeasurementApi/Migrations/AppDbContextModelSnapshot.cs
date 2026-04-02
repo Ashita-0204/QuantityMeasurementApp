@@ -75,15 +75,27 @@ namespace QuantityMeasurementApi.Migrations
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
 
+                    // FIX: UserId was missing from snapshot — caused EF model/DB mismatch
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Operand1Category");
-
                     b.HasIndex("Operation");
-
                     b.HasIndex("Timestamp");
+                    b.HasIndex("UserId");  // added by AddUserIdToMeasurements migration
 
                     b.ToTable("quantity_measurements_ef", (string)null);
+                });
+
+            modelBuilder.Entity("QuantityMeasurementModel.Entities.MeasurementRecord", b =>
+                {
+                    b.HasOne("QuantityMeasurementModel.Entities.UserEntity", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired(false);
                 });
 
             modelBuilder.Entity("QuantityMeasurementModel.Entities.UserEntity", b =>
@@ -113,11 +125,8 @@ namespace QuantityMeasurementApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("Username")
-                        .IsUnique();
+                    b.HasIndex("Email").IsUnique();
+                    b.HasIndex("Username").IsUnique();
 
                     b.ToTable("users", (string)null);
                 });

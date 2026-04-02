@@ -1,6 +1,6 @@
 using QuantityMeasurementModel.DTOs;
 
-namespace QuantityMeasurementBusinessLayer
+namespace QuantityMeasurementBusinessLayer.Interfaces
 {
     public interface IQuantityMeasurementService
     {

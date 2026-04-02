@@ -3,6 +3,7 @@ using QuantityMeasurementApp.Models;
 using QuantityMeasurementModel;
 using QuantityMeasurementModel.DTOs;
 using QuantityMeasurementRepository;
+using QuantityMeasurementBusinessLayer.Interfaces;
 
 namespace QuantityMeasurementBusinessLayer
 {

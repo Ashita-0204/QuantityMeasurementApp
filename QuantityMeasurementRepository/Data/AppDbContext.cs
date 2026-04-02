@@ -33,6 +33,15 @@ namespace QuantityMeasurementRepository.Data
                 e.HasIndex(m => m.Operation);
                 e.HasIndex(m => m.Operand1Category);
                 e.HasIndex(m => m.Timestamp);
+                e.HasIndex(m => m.UserId);
+
+                // FK: MeasurementRecord.UserId → UserEntity.Id
+                // Nullable so old rows (UserId=0/NULL) don't violate the constraint.
+                e.HasOne<UserEntity>()
+                 .WithMany()
+                 .HasForeignKey(m => m.UserId)
+                 .IsRequired(false)
+                 .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

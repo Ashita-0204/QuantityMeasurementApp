@@ -4,12 +4,17 @@ namespace QuantityMeasurementModel.Entities
 {
     /// <summary>
     /// UC17: Flat EF Core entity mapping to 'quantity_measurements_ef' table.
+    /// UserId links every record to the user who saved it.
     /// </summary>
     public class MeasurementRecord
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+
+        // Which user this record belongs to (matches UserEntity.Id). Nullable so
+        // rows that existed before auth was added don't violate the FK constraint.
+        public int? UserId { get; set; }
 
         [Required]
         [MaxLength(50)]

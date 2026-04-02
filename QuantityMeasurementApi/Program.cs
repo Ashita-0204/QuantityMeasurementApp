@@ -1,116 +1,117 @@
-using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using QuantityMeasurementApi.Middleware;
 using QuantityMeasurementBusinessLayer;
-using QuantityMeasurementBusinessLayer.Services.Auth;
+using QuantityMeasurementBusinessLayer.Interfaces;
 using QuantityMeasurementRepository;
 using QuantityMeasurementRepository.Data;
 using QuantityMeasurementRepository.Services;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// EF Core -> SQL Server ---------------------------------------------------
-// AppDbContext lives in Repository layer. Every Swagger API call saves here.
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("QuantityMeasurementApi")));
-
-// -- Dependency Injection ---------------------------------------------------
-builder.Services.AddScoped<IAuthService, AuthService>();
-
-// EfQuantityMeasurementRepository -> all Swagger measurements go to SQL Server
-builder.Services.AddScoped<EfQuantityMeasurementRepository>();
-builder.Services.AddScoped<IQuantityMeasurementRepository>(
-    sp => sp.GetRequiredService<EfQuantityMeasurementRepository>());
-
-// UC1-UC16 business logic - completely unchanged
-builder.Services.AddScoped<IQuantityMeasurementService, QuantityMeasurementServiceImpl>();
-
-// -- JWT Authentication -----------------------------------------------------
-builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(opt => opt.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
-    });
-
-builder.Services.AddAuthorization();
 builder.Services.AddControllers();
-
-// --  Swagger ----------------------------------------------------------------
 builder.Services.AddEndpointsApiExplorer();
+
+// Swagger
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Quantity Measurement API",
-        Version = "v1",
-        Description = "UC17 REST API. " +
-                      "1) Register → 2) Login → 3) Click Authorize → paste Bearer token → 4) Test endpoints. " +
-                      "Every operation is saved to SQL Server automatically."
-    });
-
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Quantify API", Version = "v1" });
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
+        Description = "JWT Authorization. Enter: Bearer {token}",
         Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Enter: Bearer {your-token}"
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
     });
-
     c.AddSecurityRequirement(new OpenApiSecurityRequirement {{
-        new OpenApiSecurityScheme
-        {
-            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
-        },
+        new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } },
         Array.Empty<string>()
     }});
 });
 
-builder.Services.AddCors(o => o.AddPolicy("AllowAll",
-    p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+// CORS — allow Live Server on 5500 and 5501
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+        policy.WithOrigins(
+                "http://127.0.0.1:5500", "http://localhost:5500",
+                "http://127.0.0.1:5501", "http://localhost:5501")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials());
+});
+
+// JWT
+var jwtKey = builder.Configuration["Jwt:Key"]!;
+var jwtIssuer = builder.Configuration["Jwt:Issuer"]!;
+var jwtAudience = builder.Configuration["Jwt:Audience"]!;
+
+builder.Services
+    .AddAuthentication(o =>
+    {
+        o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        o.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    })
+    .AddCookie(o =>
+    {
+        // FIX 1: Use Lax instead of None.
+        // SameSite=None requires Secure=true. On http://localhost SameAsRequest
+        // sends the cookie as non-secure, so the browser silently drops it and
+        // the OAuth correlation check fails with "Correlation failed."
+        o.Cookie.SameSite = SameSiteMode.Lax;
+        o.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    })
+    .AddJwtBearer(o =>
+    {
+        o.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+        };
+    })
+    .AddGoogle(o =>
+    {
+        o.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
+        o.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
+        // FIX 2: CallbackPath must be a middleware-only path, NOT a controller route.
+        // The Google middleware intercepts requests to this path itself to validate
+        // the OAuth state+code. If it matches a controller route too, they conflict
+        // and the correlation cookie is never validated correctly.
+        // *** Also update this URI in Google Cloud Console → Authorized redirect URIs ***
+        // Add: http://localhost:5001/signin-google
+        o.CallbackPath = "/signin-google";
+    });
+
+builder.Services.AddAuthorization();
+
+// EF Core
+builder.Services.AddDbContext<AppDbContext>(o =>
+    o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// DI
+builder.Services.AddScoped<IQuantityMeasurementRepository, EfQuantityMeasurementRepository>();
+builder.Services.AddScoped<IQuantityMeasurementService, QuantityMeasurementServiceImpl>();
 
 var app = builder.Build();
 
-// --Ensure SQL Server tables exist on startup ------------------------------
-using (var scope = app.Services.CreateScope())
+if (app.Environment.IsDevelopment())
 {
-    try
-    {
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        db.Database.EnsureCreated();
-        Console.WriteLine("[UC17] SQL Server tables ready.");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"[UC17] DB warning: {ex.Message}");
-    }
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Quantify API V1"));
 }
 
-// --  Middleware pipeline ----------------------------------------------------
-app.UseMiddleware<GlobalExceptionMiddleware>();
-
-app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Quantity Measurement API v1");
-    c.RoutePrefix = "swagger";
-});
-
-app.UseCors("AllowAll");
+app.UseCors("AllowFrontend");   // MUST be before auth
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
 app.Run();

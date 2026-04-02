@@ -6,9 +6,14 @@ using QuantityMeasurementRepository.Data;
 namespace QuantityMeasurementRepository.Services
 {
     /// <summary>
-    /// UC17: EF Core implementation of IQuantityMeasurementRepository.
-    /// Every Swagger API call goes through this — saving to SQL Server automatically.
-    /// No SqlCommand, no stored procedures, no manual ResultSet mapping.
+    /// EF Core implementation of IQuantityMeasurementRepository.
+    ///
+    /// IMPORTANT: Save() is intentionally a no-op here.
+    /// The service layer calls _repository.Save() after every compute operation,
+    /// but in the web API those records are saved PER USER via the explicit
+    /// /api/QuantityMeasurement/save endpoint (which carries the JWT userId).
+    /// Letting Save() insert here would produce UserId=0 rows (no user context
+    /// available in the repository layer) and cause a NOT NULL / FK violation.
     /// </summary>
     public class EfQuantityMeasurementRepository : IQuantityMeasurementRepository
     {
@@ -19,10 +24,13 @@ namespace QuantityMeasurementRepository.Services
             _db = db;
         }
 
+        // ── No-op: user-scoped saving is handled by the controller ──────────
         public void Save(QuantityMeasurementEntity entity)
         {
-            _db.Measurements.Add(ToRecord(entity));
-            _db.SaveChanges();
+            // Intentionally empty.
+            // The QuantityMeasurementServiceImpl calls this after every compute,
+            // but the EF repository has no UserId here. History is persisted by
+            // the /save and /save-batch controller endpoints which have the JWT claim.
         }
 
         public IReadOnlyList<QuantityMeasurementEntity> GetAll()
@@ -59,7 +67,7 @@ namespace QuantityMeasurementRepository.Services
         public string GetPoolStatistics()
             => $"[EfRepository] SQL Server via EF Core | Records: {_db.Measurements.Count()}";
 
-        // -- Mapping ----------------------------------------------------------
+        // ── Mapping ─────────────────────────────────────────────────────────
 
         private static MeasurementRecord ToRecord(QuantityMeasurementEntity e) => new()
         {
