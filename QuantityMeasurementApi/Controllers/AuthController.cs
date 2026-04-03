@@ -124,7 +124,7 @@ namespace QuantityMeasurementApi.Controllers
                 // Read the identity the middleware wrote into the cookie after validating Google's response
                 var auth = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
                 if (!auth.Succeeded)
-                    return Redirect("http://localhost:5500/Auth.html?error=google_auth_failed");
+                    return Redirect("http://localhost:4200/auth?error=google_auth_failed");
 
                 var email = auth.Principal!.FindFirstValue(ClaimTypes.Email) ?? "";
                 var name = auth.Principal!.FindFirstValue(ClaimTypes.Name) ?? "User";
@@ -152,13 +152,13 @@ namespace QuantityMeasurementApi.Controllers
 
                 var token = MakeToken(user);
                 return Redirect(
-                    $"http://localhost:5500/Index.html" +
+                    $"http://localhost:4200/" +
                     $"?token={Uri.EscapeDataString(token)}" +
                     $"&username={Uri.EscapeDataString(user.Username)}");
             }
             catch (Exception ex)
             {
-                return Redirect($"http://localhost:5500/Auth.html?error={Uri.EscapeDataString(ex.Message)}");
+                return Redirect($"http://localhost:4200/auth?error={Uri.EscapeDataString(ex.Message)}");
             }
         }
 
