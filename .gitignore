@@ -1,9 +1,6 @@
-
 # Build folders
 bin/
 obj/
-*.csproj
-*.slnx
 
 # Test results
 TestResults/
@@ -11,7 +8,7 @@ TestResults/
 # VS Code settings
 .vscode/
 
-# in .gitignore at repo root
+# Secrets
 appsettings.json
 appsettings.Production.json
 .env
