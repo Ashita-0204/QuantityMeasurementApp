@@ -119,16 +119,18 @@ namespace QuantityMeasurementApi.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GoogleCallback()
         {
+            // Declare frontendUrl FIRST — before any return/catch that uses it
+            var frontendUrl = _config["Frontend:BaseUrl"] ?? "http://localhost:4200";
+
             try
             {
-                // Read the identity the middleware wrote into the cookie after validating Google's response
                 var auth = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
                 if (!auth.Succeeded)
                     return Redirect($"{frontendUrl}/auth?error=google_auth_failed");
+
                 var email = auth.Principal!.FindFirstValue(ClaimTypes.Email) ?? "";
                 var name = auth.Principal!.FindFirstValue(ClaimTypes.Name) ?? "User";
 
-                // Upsert user
                 var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == email);
                 if (user == null)
                 {
@@ -150,9 +152,6 @@ namespace QuantityMeasurementApi.Controllers
                 }
 
                 var token = MakeToken(user);
-                var frontendUrl = _config["Frontend:BaseUrl"] ?? "http://localhost:4200";
-
-                // Success redirect:
                 return Redirect(
                     $"{frontendUrl}/" +
                     $"?token={Uri.EscapeDataString(token)}" +
@@ -163,7 +162,6 @@ namespace QuantityMeasurementApi.Controllers
                 return Redirect($"{frontendUrl}/auth?error={Uri.EscapeDataString(ex.Message)}");
             }
         }
-
         [HttpPost("refresh-token")]
         [Authorize]
         public ActionResult<object> RefreshToken()
