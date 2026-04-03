@@ -33,14 +33,16 @@ builder.Services.AddSwaggerGen(c =>
     }});
 });
 
-// CORS — allow Live Server on 5500 and 5501
+// CORS — allow frontend origins including deployed Render frontend
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
         policy.WithOrigins(
                 "http://127.0.0.1:5500", "http://localhost:5500",
                 "http://127.0.0.1:5501", "http://localhost:5501",
-             "http://127.0.0.1:4200", "http://localhost:4200")
+                "http://127.0.0.1:4200", "http://localhost:4200",
+                "https://quantitymeasurementapp-frontend-opsu.onrender.com"  // ✅ Your deployed frontend
+              )
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials());
@@ -60,10 +62,6 @@ builder.Services
     })
     .AddCookie(o =>
     {
-        // FIX 1: Use Lax instead of None.
-        // SameSite=None requires Secure=true. On http://localhost SameAsRequest
-        // sends the cookie as non-secure, so the browser silently drops it and
-        // the OAuth correlation check fails with "Correlation failed."
         o.Cookie.SameSite = SameSiteMode.Lax;
         o.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     })
@@ -84,20 +82,15 @@ builder.Services
     {
         o.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
         o.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
-        // FIX 2: CallbackPath must be a middleware-only path, NOT a controller route.
-        // The Google middleware intercepts requests to this path itself to validate
-        // the OAuth state+code. If it matches a controller route too, they conflict
-        // and the correlation cookie is never validated correctly.
-        // *** Also update this URI in Google Cloud Console → Authorized redirect URIs ***
-        // Add: http://localhost:5001/signin-google
         o.CallbackPath = "/signin-google";
     });
 
 builder.Services.AddAuthorization();
 
-// EF Core
+// ✅ EF Core — PostgreSQL instead of SQL Server
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(o =>
-    o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    o.UseNpgsql(connectionString, b => b.MigrationsAssembly("QuantityMeasurementRepository")));
 
 // DI
 builder.Services.AddScoped<IQuantityMeasurementRepository, EfQuantityMeasurementRepository>();
@@ -105,11 +98,16 @@ builder.Services.AddScoped<IQuantityMeasurementService, QuantityMeasurementServi
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+// ✅ Auto-run migrations on startup (important for Render — no manual migration step needed)
+using (var scope = app.Services.CreateScope())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Quantify API V1"));
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
 }
+
+// ✅ Show Swagger in all environments (useful on Render for testing)
+app.UseSwagger();
+app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Quantify API V1"));
 
 app.UseCors("AllowFrontend");   // MUST be before auth
 app.UseAuthentication();
