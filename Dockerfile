@@ -5,22 +5,22 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-# Copy all project files
-COPY ../QuantityMeasurementModel/QuantityMeasurementModel.csproj QuantityMeasurementModel/
-COPY ../QuantityMeasurementApp/QuantityMeasurementApp.csproj QuantityMeasurementApp/
-COPY ../QuantityMeasurementRepository/QuantityMeasurementRepository.csproj QuantityMeasurementRepository/
-COPY ../QuantityMeasurementBusinessLayer/QuantityMeasurementBusinessLayer.csproj QuantityMeasurementBusinessLayer/
-COPY QuantityMeasurementApi.csproj QuantityMeasurementApi/
+# Copy all project files first (for layer caching)
+COPY QuantityMeasurementModel/QuantityMeasurementModel.csproj QuantityMeasurementModel/
+COPY QuantityMeasurementApp/QuantityMeasurementApp.csproj QuantityMeasurementApp/
+COPY QuantityMeasurementRepository/QuantityMeasurementRepository.csproj QuantityMeasurementRepository/
+COPY QuantityMeasurementBusinessLayer/QuantityMeasurementBusinessLayer.csproj QuantityMeasurementBusinessLayer/
+COPY QuantityMeasurementApi/QuantityMeasurementApi.csproj QuantityMeasurementApi/
 
 # Restore
 RUN dotnet restore QuantityMeasurementApi/QuantityMeasurementApi.csproj
 
-# Copy all source
-COPY ../QuantityMeasurementModel/ QuantityMeasurementModel/
-COPY ../QuantityMeasurementApp/ QuantityMeasurementApp/
-COPY ../QuantityMeasurementRepository/ QuantityMeasurementRepository/
-COPY ../QuantityMeasurementBusinessLayer/ QuantityMeasurementBusinessLayer/
-COPY . QuantityMeasurementApi/
+# Copy all source code
+COPY QuantityMeasurementModel/ QuantityMeasurementModel/
+COPY QuantityMeasurementApp/ QuantityMeasurementApp/
+COPY QuantityMeasurementRepository/ QuantityMeasurementRepository/
+COPY QuantityMeasurementBusinessLayer/ QuantityMeasurementBusinessLayer/
+COPY QuantityMeasurementApi/ QuantityMeasurementApi/
 
 # Build and publish
 RUN dotnet publish QuantityMeasurementApi/QuantityMeasurementApi.csproj -c Release -o /app/publish
