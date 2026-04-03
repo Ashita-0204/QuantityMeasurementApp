@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -14,6 +15,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+// ✅ Fix for Render's reverse proxy — makes ASP.NET aware of https scheme
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();  // Trust all proxies (safe on Render)
+    options.KnownProxies.Clear();
+});
 
 // Swagger
 builder.Services.AddSwaggerGen(c =>
@@ -41,7 +50,7 @@ builder.Services.AddCors(options =>
                 "http://127.0.0.1:5500", "http://localhost:5500",
                 "http://127.0.0.1:5501", "http://localhost:5501",
                 "http://127.0.0.1:4200", "http://localhost:4200",
-                "https://quantitymeasurementapp-frontend-opsu.onrender.com"  // ✅ Your deployed frontend
+                "https://quantitymeasurementapp-frontend-opsu.onrender.com"
               )
               .AllowAnyHeader()
               .AllowAnyMethod()
@@ -87,7 +96,7 @@ builder.Services
 
 builder.Services.AddAuthorization();
 
-// ✅ EF Core — PostgreSQL instead of SQL Server
+// EF Core — PostgreSQL
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(o =>
     o.UseNpgsql(connectionString, b => b.MigrationsAssembly("QuantityMeasurementRepository")));
@@ -98,18 +107,20 @@ builder.Services.AddScoped<IQuantityMeasurementService, QuantityMeasurementServi
 
 var app = builder.Build();
 
-// ✅ Auto-run migrations on startup (important for Render — no manual migration step needed)
+// Auto-run migrations on startup
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
 }
 
-// ✅ Show Swagger in all environments (useful on Render for testing)
+// ✅ MUST be first in the pipeline — reads X-Forwarded-Proto from Render's proxy
+app.UseForwardedHeaders();
+
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Quantify API V1"));
 
-app.UseCors("AllowFrontend");   // MUST be before auth
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
