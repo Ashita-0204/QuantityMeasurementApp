@@ -9,6 +9,5 @@ TestResults/
 .vscode/
 
 # Secrets
-appsettings.json
-appsettings.Production.json
+
 .env
