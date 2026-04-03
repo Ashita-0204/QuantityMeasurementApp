@@ -10,3 +10,8 @@ TestResults/
 
 # VS Code settings
 .vscode/
+
+# in .gitignore at repo root
+appsettings.json
+appsettings.Production.json
+.env
