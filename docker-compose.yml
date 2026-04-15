@@ -1,0 +1,151 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# QUANTITY MEASUREMENT APP - STREAMLINED MICROSERVICES ARCHITECTURE
+# ══════════════════════════════════════════════════════════════════════════════
+# Services:
+#   1. api-gateway    → Routes requests to backend services
+#   2. auth-service   → Authentication + User Management (merged)
+#   3. qma-service    → Quantity Operations + History (merged)
+#   4. redis          → Cache layer
+#   5. postgres       → Database (users + measurements)
+# ══════════════════════════════════════════════════════════════════════════════
+
+# ── Shared environment variables ─────────────────────────────────────────────
+x-jwt-env: &jwt-env
+  Jwt__Key: "your-super-secret-jwt-key-min-32-chars-change-this-in-production"
+  Jwt__Issuer: "QuantityMeasurementApi"
+  Jwt__Audience: "QuantityMeasurementApp"
+
+x-google-env: &google-env
+  Authentication__Google__ClientId: "YOUR_GOOGLE_CLIENT_ID"
+  Authentication__Google__ClientSecret: "YOUR_GOOGLE_CLIENT_SECRET"
+
+services:
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # 1. PostgreSQL Database
+  # ──────────────────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: qma-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: qma_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - qma-network
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # 2. Redis Cache
+  # ──────────────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: qma-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - qma-network
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # 3. API Gateway (Port 5000)
+  # ──────────────────────────────────────────────────────────────────────────
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: qma-api-gateway
+    ports:
+      - "5000:8080"
+    environment:
+      <<: *jwt-env
+      ASPNETCORE_URLS: "http://+:8080"
+      Services__AuthService: "http://auth-service:8080"
+      Services__QmaService: "http://qma-service:8080"
+      Frontend__BaseUrl: "http://localhost:4200"
+    depends_on:
+      - auth-service
+      - qma-service
+    networks:
+      - qma-network
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # 4. Auth Service (Port 5001)
+  # Merged: Authentication + User Management
+  # ──────────────────────────────────────────────────────────────────────────
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: qma-auth-service
+    ports:
+      - "5001:8080"
+    environment:
+      <<: [*jwt-env, *google-env]
+      ASPNETCORE_URLS: "http://+:8080"
+      ConnectionStrings__DefaultConnection: >
+        Host=postgres;Port=5432;Database=qma_db;
+        Username=postgres;Password=postgres
+      Frontend__BaseUrl: "http://localhost:4200"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - qma-network
+
+  # ──────────────────────────────────────────────────────────────────────────
+  # 5. QMA Service (Port 5002)
+  # Merged: Quantity Operations + History
+  # ──────────────────────────────────────────────────────────────────────────
+  qma-service:
+    build:
+      context: ./qma-service
+      dockerfile: Dockerfile
+    container_name: qma-service
+    ports:
+      - "5002:8080"
+    environment:
+      <<: *jwt-env
+      ASPNETCORE_URLS: "http://+:8080"
+      ConnectionStrings__DefaultConnection: >
+        Host=postgres;Port=5432;Database=qma_db;
+        Username=postgres;Password=postgres
+      ConnectionStrings__Redis: "redis:6379"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - qma-network
+
+# ──────────────────────────────────────────────────────────────────────────
+# Volumes
+# ──────────────────────────────────────────────────────────────────────────
+volumes:
+  pgdata:
+    driver: local
+  redis-data:
+    driver: local
+
+# ──────────────────────────────────────────────────────────────────────────
+# Networks
+# ──────────────────────────────────────────────────────────────────────────
+networks:
+  qma-network:
+    driver: bridge
